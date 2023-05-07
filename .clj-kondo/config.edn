@@ -1,0 +1,2 @@
+{:linters {:unresolved-var {:exclude [io.github.humbleui.ui]}}
+ :lint-as {io.github.humbleui.core/deftype+ clojure.core/deftype}}
