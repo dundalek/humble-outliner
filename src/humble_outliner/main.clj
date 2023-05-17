@@ -262,6 +262,53 @@
             (update new-id assoc :parent parent-id)
             (recalculate-entities-order order))))))
 
+(defn item-move-up [entities id]
+  (let [parent-id (get-in entities [id :parent])
+        order (get-children-order entities parent-id)
+        idx (index-of order id)
+        above-idx (dec idx)
+        above-id (get order above-idx)]
+    (if above-id
+      (let [new-order (assoc order
+                             idx above-id
+                             above-idx id)]
+        (recalculate-entities-order entities new-order))
+      (if-some [previous-parent-sibling (when parent-id
+                                          (find-prev-sibling entities parent-id))]
+        (let [order (-> (get-children-order entities previous-parent-sibling)
+                        (conj id))]
+          (-> entities
+              (assoc-in [id :parent] previous-parent-sibling)
+              (recalculate-entities-order order)))
+        entities))))
+
+(defn item-move-down [entities id]
+  (let [parent-id (get-in entities [id :parent])
+        order (get-children-order entities parent-id)
+        idx (index-of order id)
+        below-idx (inc idx)
+        below-id (get order below-idx)]
+    (if below-id
+      (let [new-order (assoc order
+                             idx below-id
+                             below-idx id)]
+        (recalculate-entities-order entities new-order))
+      (if-some [next-parent-sibling (when parent-id
+                                      (next-sibling entities parent-id))]
+        (let [order (into [id] (get-children-order entities next-parent-sibling))]
+          (-> entities
+              (assoc-in [id :parent] next-parent-sibling)
+              (recalculate-entities-order order)))
+        entities))))
+
+(defn event-item-move-up [id]
+  (fn [db]
+    (update db :entities item-move-up id)))
+
+(defn event-item-move-down [id]
+  (fn [db]
+    (update db :entities item-move-down id)))
+
 (defn event-item-enter-pressed [target-id from]
   (fn [db]
     (let [{:keys [next-id]} db
@@ -341,8 +388,15 @@
                 (dispatch! (event-item-outdented id))
 
                 (= :tab (:key e))
-                ; (println "indent")
-                (dispatch! (event-item-indented id)))))
+                (dispatch! (event-item-indented id))
+
+                (and (= :up (:key e))
+                     (= #{:shift :alt} (:modifiers e)))
+                (dispatch! (event-item-move-up id))
+
+                (and (= :down (:key e))
+                     (= #{:shift :alt} (:modifiers e)))
+                (dispatch! (event-item-move-down id)))))
 
           (listeners/on-key-focused keymap
             (with-cursor/with-cursor :ibeam

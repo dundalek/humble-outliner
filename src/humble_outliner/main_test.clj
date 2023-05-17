@@ -414,3 +414,84 @@
               entities (-> (from-compact items))
               result ((main/event-item-beginning-backspace-pressed 1) {:entities entities})]
           (is (= items (to-compact (:entities result)))))))))
+
+(deftest item-move-up
+  (let [items [1 [11
+                  12]
+               2 [21
+                  22 [223]]]]
+    (testing "moving top level item"
+      (is (= [2 [21
+                 22 [223]]
+              1 [11
+                 12]]
+             (update-compact items main/item-move-up 2))))
+    (testing "moving nested item within same parent"
+      (is (= [1 [11
+                 12]
+              2 [22 [223]
+                 21]]
+             (update-compact items main/item-move-up 22))))
+    (testing "moving nested item that keeps indentation level but changes parent"
+      (is (= [1 [11
+                 12
+                 21]
+              2 [22 [223]]]
+             (update-compact items main/item-move-up 21))))
+    (testing "moving nested item that keeps indentation level but changes parent"
+      (let [expected-items [1 [11
+                               12]
+                            2 [21 [223]
+                               22]]]
+        (is (= expected-items (update-compact items main/item-move-up 223)))
+        (testing "moving nested item that can't keep indent level does nothing"
+          (is (= expected-items (-> items
+                                    (update-compact main/item-move-up 223)
+                                    (update-compact main/item-move-up 223)))))))
+    (testing "moving first top level item up does nothing"
+      (is (= items (update-compact items main/item-move-up 1))))
+    (testing "moving nested item that can't keep indent level does nothing"
+      (is (= items (update-compact items main/item-move-up 11))))))
+
+(deftest item-move-down
+  (let [items [1 [11
+                  12]
+               2 [21
+                  22 [223]]]]
+    (testing "moving top level item"
+      (is (= [2 [21
+                 22 [223]]
+              1 [11
+                 12]]
+             (update-compact items main/item-move-down 1))))
+    (testing "moving nested item within same parent"
+      (is (= [1 [11
+                 12]
+              2 [22 [223]
+                 21]]
+             (update-compact items main/item-move-down 21))))
+    (testing "moving nested item that keeps indentation level but changes parent"
+      (is (= [1 [11]
+              2 [12
+                 21
+                 22 [223]]]
+             (update-compact items main/item-move-down 12))))
+    (testing "moving nested item that keeps indentation level but changes parent"
+      (let [items [1 [11
+                      12]
+                   2 [21 [223]
+                      22]]
+            expected-items [1 [11
+                               12]
+                            2 [21
+                               22 [223]]]]
+        (is (= expected-items (update-compact items main/item-move-down 223)))
+        (testing "moving nested item that can't keep indent level does nothing"
+          (is (= expected-items (-> items
+                                    (update-compact main/item-move-down 223)
+                                    (update-compact main/item-move-down 223)))))))
+    (testing "moving last top level item up does nothing"
+      (is (= items (update-compact items main/item-move-down 2))))
+    (testing "moving nested item that can't keep indent level does nothing"
+      (is (= items (update-compact items main/item-move-down 22)))
+      (is (= items (update-compact items main/item-move-down 223))))))
