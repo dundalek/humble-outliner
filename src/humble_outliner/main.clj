@@ -3,15 +3,15 @@
   Responsible for initializing the window and app state when the app starts."
   (:require
    [clojure.string :as str]
+   [humble-outliner.state :as state]
+   [humble-outliner.theme :as theme]
+   [io.github.humbleui.core :as core]
    [io.github.humbleui.cursor :as cursor]
-   [io.github.humbleui.paint :as paint]
    [io.github.humbleui.ui :as ui] ;; [io.github.humbleui.window :as window]
    [io.github.humbleui.ui.clip :as clip]
    [io.github.humbleui.ui.focusable :as focusable]
    [io.github.humbleui.ui.listeners :as listeners]
-   [io.github.humbleui.ui.with-cursor :as with-cursor]
-   [humble-outliner.state :as state]
-   [io.github.humbleui.core :as core]))
+   [io.github.humbleui.ui.with-cursor :as with-cursor]))
 
 (defonce *input-states (atom {}))
 
@@ -72,7 +72,8 @@
                   3 {:text "abc"}
                   4 {:text "cdf" :parent 3}}
        :next-id 5
-       :focused-id nil}
+       :focused-id nil
+       :theme theme/default-theme}
       (update :entities recalculate-entities-order [1 2 3 4])
       (focus-item! 1)))
 
@@ -355,6 +356,10 @@
                                    :to new-cursor-position)))
         db))))
 
+(defn event-theme-toggled []
+  (fn [db]
+    (update db :theme theme/next-theme)))
+
 (defn text-field [{:keys [id focused *state]}]
   (let [opts {:focused focused
               :on-focus (fn [] ; no parameters for on-focus
@@ -405,11 +410,12 @@
 (def dot-spacer
   (ui/gap 6 6))
 
-(def dot
-  (ui/valign 0.5
-    (clip/clip-rrect 3
-      (ui/rect (paint/fill 0xFFCDCCCA)
-        dot-spacer))))
+(defn dot []
+  (ui/dynamic ctx [{::theme/keys [bullet-fill]} ctx]
+    (ui/valign 0.5
+      (clip/clip-rrect 3
+        (ui/rect bullet-fill
+          dot-spacer)))))
 
 (defn outline-item [id]
   (ui/dynamic _ [{:keys [focused-id]} @*db
@@ -419,7 +425,7 @@
                  _ (swap! *state assoc :text text)]
     (ui/row
       (if (or focused (seq text))
-        dot
+        (dot)
         dot-spacer)
       (ui/gap 10 0)
       (ui/width 300
@@ -437,17 +443,38 @@
           (when (seq children)
             (outline-tree children)))))))
 
+(defn theme-switcher []
+  (ui/dynamic ctx [{:keys [leading]} ctx]
+    (ui/row
+      [:stretch 1 nil]
+      (ui/clickable
+        {:on-click (fn [_] (dispatch! (event-theme-toggled)))}
+        (ui/padding leading
+          (ui/label "Toggle theme"))))))
+
 (def app
   ; we must wrap our app in a theme
-  (ui/default-theme {:cap-height 12}
-    (ui/valign 0.5
-      (ui/halign 0.5
-        (ui/column
-         ; (ui/button #(dispatch! (action-append-item))
-         ;   (ui/label "Add item"))
-          (ui/dynamic _ [items (->> (:entities @*db)
-                                    (stratify))]
-            (outline-tree items)))))))
+  (ui/dynamic _ [{:keys [theme]} @*db]
+    (theme/with-theme
+      theme
+      (ui/dynamic ctx [{::theme/keys [background-fill]} ctx]
+        (ui/rect background-fill
+          (ui/column
+            (theme-switcher)
+            (ui/valign 0.5
+              (ui/halign 0.5
+                (ui/column
+                  (ui/dynamic _ [items (->> (:entities @*db)
+                                            (stratify))]
+                    (outline-tree items)))))))))))
+
+(defn window []
+  (ui/window
+    ;; Ideally, we would pass :bg-color option since window does canvas/clear.
+    ;; But it does not seem to work to grab the theme from context via top-level ui/dynamic.
+    ;; Therefore there is another canvas/clear in the `app` component that sets the background.
+    {:title    "Editor"}
+    state/*app))
 
 ;; reset current app state on eval of this ns
 (reset! state/*app app)
@@ -456,9 +483,5 @@
   "Run once on app start, starting the humble app."
   [& args]
   (ui/start-app!
-    (reset! state/*window
-            (ui/window
-              {:title    "Editor"
-               :bg-color 0xFFFFFFFF}
-              state/*app)))
+    (reset! state/*window (window)))
   (state/redraw!))
