@@ -465,13 +465,11 @@
               (outline-tree children))))))))
 
 (defn theme-switcher []
-  (ui/dynamic ctx [{:keys [leading]} ctx]
-    (ui/row
-      [:stretch 1 nil]
-      (ui/clickable
-        {:on-click (fn [_] (dispatch! (event-theme-toggled)))}
-        (ui/padding leading
-          (ui/label "Toggle theme"))))))
+  (ui/row
+    [:stretch 1 nil]
+    (ui/padding 6
+      (ui/button #(dispatch! (event-theme-toggled))
+        (ui/label "Toggle theme")))))
 
 (def app
   ; we must wrap our app in a theme

@@ -7,16 +7,24 @@
   (assoc opts :cap-height 12))
 
 (def light
-  (make-theme {:fill-text (paint/fill 0xFF000000)
-               ::background-fill (paint/fill 0xFFFFFFFF)
-               ::bullet-fill (paint/fill 0xFFCDCCCA)
-               ::indentline-fill (paint/fill 0xFFEFEDEB)}))
+  (let [background-fill (paint/fill 0xFFFFFFFF)]
+    (make-theme {:fill-text (paint/fill 0xFF000000)
+                 ::background-fill background-fill
+                 ::bullet-fill (paint/fill 0xFFCDCCCA)
+                 ::indentline-fill (paint/fill 0xFFEFEDEB)
+                 :hui.button/bg background-fill
+                 :hui.button/bg-hovered (paint/fill 0xFFE9E9E9)
+                 :hui.button/bg-active (paint/fill 0xFFF0F0F0)})))
 
 (def dark
-  (make-theme {:fill-text (paint/fill 0xFF93A1A1)
-               ::background-fill (paint/fill 0xFF002B36)
-               ::bullet-fill (paint/fill 0xFF5A878B)
-               ::indentline-fill (paint/fill 0xFF0B4A5A)}))
+  (let [background-fill (paint/fill 0xFF002B36)]
+    (make-theme {:fill-text (paint/fill 0xFF93A1A1)
+                 ::background-fill background-fill
+                 ::bullet-fill (paint/fill 0xFF5A878B)
+                 ::indentline-fill (paint/fill 0xFF0B4A5A)
+                 :hui.button/bg background-fill
+                 :hui.button/bg-hovered (paint/fill 0xFF003C48)
+                 :hui.button/bg-active (paint/fill 0xFF003742)})))
 
 (def themes
   {:light light
