@@ -67,15 +67,23 @@
     4 {:order 0 :parent 1}}))
 
 (def default-db
-  (-> {:entities {1 {:text "hello"}
-                  2 {:text "world"}
-                  3 {:text "abc"}
-                  4 {:text "cdf" :parent 3}}
-       :next-id 5
-       :focused-id nil
-       :theme theme/default-theme}
-      (update :entities recalculate-entities-order [1 2 3 4])
-      (focus-item! 1)))
+  (let [entities
+        {1 {:text "hello"}
+         2 {:text "world"}
+         3 {:text "abc"}
+         4 {:text "cdf" :parent 3}}
+        #_(->> (range 50)
+               (map (fn [i]
+                      [i {:text (str "Item " i)}]))
+               (into {}))
+        next-id (inc (reduce max (keys entities)))
+        order (vec (sort (keys entities)))]
+    (-> {:entities entities
+         :next-id next-id
+         :focused-id nil
+         :theme theme/default-theme}
+        (update :entities recalculate-entities-order order)
+        (focus-item! (first order)))))
 
 (defn index-of [coll e]
   #_(first (keep-indexed #(when (= e %2) %1) coll))
@@ -461,8 +469,11 @@
         (ui/rect background-fill
           (ui/column
             (theme-switcher)
-            (ui/valign 0.5
-              (ui/halign 0.5
+            (ui/vscrollbar
+              ;; We don't need top padding as there is a gap from the theme switcher.
+              ;; There is an extra bottom padding to compesate, otherwise items
+              ;; are cut off when scrolling, not sure why.
+              (ui/padding 20 0 20 80
                 (ui/column
                   (ui/dynamic _ [items (->> (:entities @*db)
                                             (stratify))]
