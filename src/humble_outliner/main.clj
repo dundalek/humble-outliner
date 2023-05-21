@@ -415,8 +415,10 @@
             (with-cursor/with-cursor :ibeam
               (ui/text-input opts *state))))))))
 
+(def dot-size 6)
+
 (def dot-spacer
-  (ui/gap 6 6))
+  (ui/gap dot-size dot-size))
 
 (defn dot []
   (ui/dynamic ctx [{::theme/keys [bullet-fill]} ctx]
@@ -435,21 +437,32 @@
       (if (or focused (seq text))
         (dot)
         dot-spacer)
-      (ui/gap 10 0)
+      (ui/gap 12 0)
       (ui/width 300
         (text-field {:id id
                      :focused focused
                      :*state *state})))))
 
+(defn indentline []
+  (ui/dynamic ctx [{::theme/keys [indentline-fill]} ctx]
+    (ui/row
+      ;; dot-size is 6px, with 1px line and 2px left gap the line is technically off center.
+      ;; But if the dot size is an odd number and line centered, then it looks optically off.
+      (ui/gap 2 0)
+      (ui/rect indentline-fill
+        (ui/gap 1 0)))))
+
 (defn outline-tree [items]
   (ui/row
-    (ui/gap 20 0)
+    (ui/gap 24 0)
     (ui/column
       (for [{:keys [id children]} items]
         (ui/column
           (outline-item id)
           (when (seq children)
-            (outline-tree children)))))))
+            (ui/row
+              (indentline)
+              (outline-tree children))))))))
 
 (defn theme-switcher []
   (ui/dynamic ctx [{:keys [leading]} ctx]

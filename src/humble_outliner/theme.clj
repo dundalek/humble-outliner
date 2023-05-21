@@ -9,12 +9,14 @@
 (def light
   (make-theme {:fill-text (paint/fill 0xFF000000)
                ::background-fill (paint/fill 0xFFFFFFFF)
-               ::bullet-fill (paint/fill 0xFFCDCCCA)}))
+               ::bullet-fill (paint/fill 0xFFCDCCCA)
+               ::indentline-fill (paint/fill 0xFFEFEDEB)}))
 
 (def dark
   (make-theme {:fill-text (paint/fill 0xFF93A1A1)
                ::background-fill (paint/fill 0xFF002B36)
-               ::bullet-fill (paint/fill 0xFF5A878B)}))
+               ::bullet-fill (paint/fill 0xFF5A878B)
+               ::indentline-fill (paint/fill 0xFF0B4A5A)}))
 
 (def themes
   {:light light
