@@ -1,8 +1,8 @@
-(ns humble-outliner.main-test
+(ns humble-outliner.events-test
   (:require
    [clojure.test :refer [deftest is testing]]
    [humble-outliner.events :as events]
-   [humble-outliner.helpers :refer [to-compact to-compact-by-text from-compact from-compact-by-text update-compact]]))
+   [humble-outliner.helpers :refer [to-compact to-compact-by-text from-compact from-compact-by-text]]))
 
 (deftest event-item-enter-pressed
   (let [entities (from-compact-by-text ["a"
