@@ -1,5 +1,5 @@
 #kaocha/v1
  {:tests [{:id :unit
            ;; add src to test paths for co-located tests
-           :test-paths ["src" #_"test"]}]
+           :test-paths [#_"src" "test"]}]
   :cloverage/opts {:ns-exclude-regex ["^.*-test$"]}}
