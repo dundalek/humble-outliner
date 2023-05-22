@@ -7,7 +7,7 @@
    [humble-outliner.theme :as theme]
    [io.github.humbleui.core :as core]
    [io.github.humbleui.cursor :as cursor]
-   [io.github.humbleui.ui :as ui] ;; [io.github.humbleui.window :as window]
+   [io.github.humbleui.ui :as ui]
    [io.github.humbleui.ui.clip :as clip]
    [io.github.humbleui.ui.focusable :as focusable]
    [io.github.humbleui.ui.listeners :as listeners]
@@ -46,19 +46,19 @@
           entities
           (map-indexed list order)))
 
-(do
-  (defn stratify
-    ([entities]
-     (stratify (group-by #(-> % val :parent) entities) nil))
-    ([parent->children id]
-     (->> (parent->children id)
-          (sort-by #(-> % val :order))
-          (map (fn [[id value]]
-                 (assoc value
-                        :id id
-                        :children (stratify parent->children id))))
-          (into []))))
+(defn stratify
+  ([entities]
+   (stratify (group-by #(-> % val :parent) entities) nil))
+  ([parent->children id]
+   (->> (parent->children id)
+        (sort-by #(-> % val :order))
+        (map (fn [[id value]]
+               (assoc value
+                      :id id
+                      :children (stratify parent->children id))))
+        (into []))))
 
+(comment
   (stratify
    {3 {:order 2}
     2 {:order 1}
@@ -118,6 +118,7 @@
 
 (defn dispatch! [action]
   (swap! *db action)
+  ;; return true for convenience to be used in event handlers to stop bubbling
   true)
 
 (defn set-item-text [db id text]
@@ -469,7 +470,7 @@
     [:stretch 1 nil]
     (ui/padding 6
       (ui/button #(dispatch! (event-theme-toggled))
-        (ui/label "Toggle theme")))))
+        (ui/label "Switch theme")))))
 
 (def app
   ; we must wrap our app in a theme
@@ -495,7 +496,7 @@
     ;; Ideally, we would pass :bg-color option since window does canvas/clear.
     ;; But it does not seem to work to grab the theme from context via top-level ui/dynamic.
     ;; Therefore there is another canvas/clear in the `app` component that sets the background.
-    {:title    "Editor"}
+    {:title "Outliner"}
     state/*app))
 
 ;; reset current app state on eval of this ns
