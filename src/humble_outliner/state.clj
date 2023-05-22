@@ -17,9 +17,6 @@
    [humble-outliner.theme :as theme]
    [io.github.humbleui.window :as window]))
 
-(def *input-states
-  (atom {}))
-
 (def default-db
   (let [entities
         {1 {:text "hello"}
@@ -35,6 +32,7 @@
     (-> {:entities entities
          :next-id next-id
          :focused-id (first order)
+         :input-states {}
          :theme theme/default-theme}
         (update :entities model/recalculate-entities-order order))))
 

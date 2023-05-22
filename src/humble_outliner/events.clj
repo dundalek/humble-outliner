@@ -2,30 +2,34 @@
   (:require
    [clojure.string :as str]
    [humble-outliner.model :as model]
-   [humble-outliner.state :as state]
    [humble-outliner.theme :as theme]
    [io.github.humbleui.core :as core]))
 
-(defn- update-input-state! [db id f & args]
-  (apply swap! state/*input-states update id f args)
-  db)
+;; Helpers
 
-(defn- reset-input-blink-state! [id]
-  (swap! state/*input-states update id assoc :cursor-blink-pivot (core/now)))
+(defn- update-input-state! [db id f & args]
+  (apply update-in db [:input-states id] f args))
+
+(defn- reset-input-blink-state! [db id]
+  (update-in db [:input-states id] assoc :cursor-blink-pivot (core/now)))
 
 (defn- focus-item!
   ([db id] (focus-item! db id {:from 0 :to 0}))
   ([db id {:keys [from to]}]
-   (update-input-state! db id assoc
-                        :from from
-                        :to to
-                        ;; reset blink state on focus so that cursor is always visible when switching focus and does not "disappear" for brief moments
-                        :cursor-blink-pivot (core/now))
-   (-> db (assoc :focused-id id))))
+   (-> db
+       (update-input-state! id assoc
+                            :from from
+                            :to to
+                          ;; reset blink state on focus so that cursor is always visible when switching focus and does not "disappear" for brief moments
+                            :cursor-blink-pivot (core/now))
+       (assoc :focused-id id))))
 
 (defn- switch-focus! [db id]
-  (let [{:keys [from]} (get @state/*input-states (:focused-id db) 0)]
+  (let [{:keys [input-states focused-id]} db
+        {:keys [from]} (get input-states focused-id 0)]
     (focus-item! db id {:from from :to from})))
+
+;; Events
 
 (defn focus-before [id]
   (fn [db]
@@ -53,18 +57,18 @@
     (let [new-entities (model/item-indent entities id)]
       (if (identical? entities new-entities)
         db
-        (do
-          (reset-input-blink-state! id)
-          (assoc db :entities new-entities))))))
+        (-> db
+            (reset-input-blink-state! id)
+            (assoc :entities new-entities))))))
 
 (defn item-outdented [id]
   (fn [{:keys [entities] :as db}]
     (let [new-entities (model/item-outdent entities id)]
       (if (identical? entities new-entities)
         db
-        (do
-          (reset-input-blink-state! id)
-          (assoc db :entities new-entities))))))
+        (-> db
+            (reset-input-blink-state! id)
+            (assoc :entities new-entities))))))
 
 (defn item-move-up [id]
   (fn [db]
@@ -94,7 +98,8 @@
               (update :next-id inc)
               (model/set-item-text next-id "")
               (assoc-in [:entities next-id :parent] parent-id)
-              (update :entities model/recalculate-entities-order order)))))))
+              (update :entities model/recalculate-entities-order order)
+              (reset-input-blink-state! target-id)))))))
 
 (defn item-beginning-backspace-pressed [item-id]
   (fn [db]

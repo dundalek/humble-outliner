@@ -14,10 +14,8 @@
 (defn text-field [{:keys [id focused *state]}]
   (let [opts {:focused focused
               :on-focus (fn [] ; no parameters for on-focus
-                          ; (println "on-focus" id)
                           (dispatch! (events/item-input-focused id)))
               :on-change (fn [{:keys [text]}]
-                           ; (println "on-change" id)
                            (dispatch! (events/item-input-changed id text)))}
         keymap {:enter #(dispatch! (events/item-enter-pressed id (:from @*state)))
                 :up #(dispatch! (events/focus-before id))
@@ -74,7 +72,7 @@
   (ui/dynamic _ [{:keys [focused-id]} @state/*db
                  {:keys [text]} (get-in @state/*db [:entities id])
                  focused (= id focused-id)
-                 *state (cursor/cursor state/*input-states id)
+                 *state (cursor/cursor-in state/*db [:input-states id])
                  _ (swap! *state assoc :text text)]
     (ui/row
       (if (or focused (seq text))
