@@ -3,7 +3,8 @@
   Responsible for initializing the window and app state when the app starts."
   (:require
    [clojure.string :as str]
-   [humble-outliner.state :as state]
+   [humble-outliner.model :as model]
+   [humble-outliner.state :as state :refer [dispatch!]]
    [humble-outliner.theme :as theme]
    [io.github.humbleui.core :as core]
    [io.github.humbleui.cursor :as cursor]
@@ -13,17 +14,15 @@
    [io.github.humbleui.ui.listeners :as listeners]
    [io.github.humbleui.ui.with-cursor :as with-cursor]))
 
-(defonce *input-states (atom {}))
-
 (defn update-input-state! [db id f & args]
-  (apply swap! *input-states update id f args)
+  (apply swap! state/*input-states update id f args)
   db)
 
 (defn reset-input-blink-state! [id]
-  (swap! *input-states update id assoc :cursor-blink-pivot (core/now)))
+  (swap! state/*input-states update id assoc :cursor-blink-pivot (core/now)))
 
 (defn switch-focus! [db id]
-  (let [{:keys [from]} (get @*input-states (:focused-id db) 0)]
+  (let [{:keys [from]} (get @state/*input-states (:focused-id db) 0)]
     (update-input-state! db id assoc
                          :from from
                          :to from
@@ -39,12 +38,6 @@
                        :cursor-blink-pivot (core/now))
   (-> db
       (assoc :focused-id id)))
-
-(defn recalculate-entities-order [entities order]
-  (reduce (fn [entities [order id]]
-            (assoc-in entities [id :order] order))
-          entities
-          (map-indexed list order)))
 
 (defn stratify
   ([entities]
@@ -65,25 +58,6 @@
     1 {:order 0}
     5 {:order 1 :parent 1}
     4 {:order 0 :parent 1}}))
-
-(def default-db
-  (let [entities
-        {1 {:text "hello"}
-         2 {:text "world"}
-         3 {:text "abc"}
-         4 {:text "cdf" :parent 3}}
-        #_(->> (range 50)
-               (map (fn [i]
-                      [i {:text (str "Item " i)}]))
-               (into {}))
-        next-id (inc (reduce max (keys entities)))
-        order (vec (sort (keys entities)))]
-    (-> {:entities entities
-         :next-id next-id
-         :focused-id nil
-         :theme theme/default-theme}
-        (update :entities recalculate-entities-order order)
-        (focus-item! (first order)))))
 
 (defn index-of [coll e]
   #_(first (keep-indexed #(when (= e %2) %1) coll))
@@ -109,17 +83,6 @@
 (defn remove-at [v idx]
   (into (subvec v 0 idx)
         (subvec v (inc idx))))
-
-(defonce *db
-  (atom default-db))
-
-(comment
-  (reset! *db default-db))
-
-(defn dispatch! [action]
-  (swap! *db action)
-  ;; return true for convenience to be used in event handlers to stop bubbling
-  true)
 
 (defn set-item-text [db id text]
   (-> db
@@ -247,7 +210,7 @@
       (-> entities
           (indent-following-siblings id)
           (assoc-in [id :parent] grad-parent-id)
-          (recalculate-entities-order order)))
+          (model/recalculate-entities-order order)))
     entities))
 
 (defn event-item-indented [id]
@@ -264,13 +227,13 @@
     (if has-children?
       (-> entities
           (update new-id assoc :parent target-id)
-          (recalculate-entities-order (into [new-id] order)))
+          (model/recalculate-entities-order (into [new-id] order)))
       (let [parent-id (get-in entities [target-id :parent])
             order (-> (get-children-order entities parent-id)
                       (insert-after target-id new-id))]
         (-> entities
             (update new-id assoc :parent parent-id)
-            (recalculate-entities-order order))))))
+            (model/recalculate-entities-order order))))))
 
 (defn item-move-up [entities id]
   (let [parent-id (get-in entities [id :parent])
@@ -282,14 +245,14 @@
       (let [new-order (assoc order
                              idx above-id
                              above-idx id)]
-        (recalculate-entities-order entities new-order))
+        (model/recalculate-entities-order entities new-order))
       (if-some [previous-parent-sibling (when parent-id
                                           (find-prev-sibling entities parent-id))]
         (let [order (-> (get-children-order entities previous-parent-sibling)
                         (conj id))]
           (-> entities
               (assoc-in [id :parent] previous-parent-sibling)
-              (recalculate-entities-order order)))
+              (model/recalculate-entities-order order)))
         entities))))
 
 (defn item-move-down [entities id]
@@ -302,13 +265,13 @@
       (let [new-order (assoc order
                              idx below-id
                              below-idx id)]
-        (recalculate-entities-order entities new-order))
+        (model/recalculate-entities-order entities new-order))
       (if-some [next-parent-sibling (when parent-id
                                       (next-sibling entities parent-id))]
         (let [order (into [id] (get-children-order entities next-parent-sibling))]
           (-> entities
               (assoc-in [id :parent] next-parent-sibling)
-              (recalculate-entities-order order)))
+              (model/recalculate-entities-order order)))
         entities))))
 
 (defn event-item-move-up [id]
@@ -339,7 +302,7 @@
               (update :next-id inc)
               (set-item-text next-id "")
               (assoc-in [:entities next-id :parent] parent-id)
-              (update :entities recalculate-entities-order order)))))))
+              (update :entities model/recalculate-entities-order order)))))))
 
 (defn event-item-beginning-backspace-pressed [item-id]
   (fn [db]
@@ -429,10 +392,10 @@
           dot-spacer)))))
 
 (defn outline-item [id]
-  (ui/dynamic _ [{:keys [focused-id]} @*db
-                 {:keys [text]} (get-in @*db [:entities id])
+  (ui/dynamic _ [{:keys [focused-id]} @state/*db
+                 {:keys [text]} (get-in @state/*db [:entities id])
                  focused (= id focused-id)
-                 *state (cursor/cursor *input-states id)
+                 *state (cursor/cursor state/*input-states id)
                  _ (swap! *state assoc :text text)]
     (ui/row
       (if (or focused (seq text))
@@ -474,7 +437,7 @@
 
 (def app
   ; we must wrap our app in a theme
-  (ui/dynamic _ [{:keys [theme]} @*db]
+  (ui/dynamic _ [{:keys [theme]} @state/*db]
     (theme/with-theme
       theme
       (ui/dynamic ctx [{::theme/keys [background-fill]} ctx]
@@ -487,7 +450,7 @@
               ;; are cut off when scrolling, not sure why.
               (ui/padding 20 0 20 80
                 (ui/column
-                  (ui/dynamic _ [items (->> (:entities @*db)
+                  (ui/dynamic _ [items (->> (:entities @state/*db)
                                             (stratify))]
                     (outline-tree items)))))))))))
 

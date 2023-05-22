@@ -13,7 +13,41 @@
      passed to `io.github.humbleui.ui/window` in app start, which will remove
      our ability to redraw it."
   (:require
+   [humble-outliner.model :as model]
+   [humble-outliner.theme :as theme]
    [io.github.humbleui.window :as window]))
+
+(def *input-states
+  (atom {}))
+
+(def default-db
+  (let [entities
+        {1 {:text "hello"}
+         2 {:text "world"}
+         3 {:text "abc"}
+         4 {:text "cdf" :parent 3}}
+        #_(->> (range 50)
+               (map (fn [i]
+                      [i {:text (str "Item " i)}]))
+               (into {}))
+        next-id (inc (reduce max (keys entities)))
+        order (vec (sort (keys entities)))]
+    (-> {:entities entities
+         :next-id next-id
+         :focused-id (first order)
+         :theme theme/default-theme}
+        (update :entities model/recalculate-entities-order order))))
+
+(def *db
+  (atom default-db))
+
+(defn dispatch! [action]
+  (swap! *db action)
+  ;; return true for convenience to be used in event handlers to stop bubbling
+  true)
+
+(comment
+  (reset! *db default-db))
 
 (def *window
   "State of the main window. Gets set on app startup."

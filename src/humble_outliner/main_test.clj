@@ -1,8 +1,9 @@
 (ns humble-outliner.main-test
   (:require
    [clojure.test :refer [are deftest is testing]]
+   [clojure.walk :as walk]
    [humble-outliner.main :as main]
-   [clojure.walk :as walk]))
+   [humble-outliner.model :as model]))
 
 (defn to-compact-impl
   [key-fn entities]
@@ -137,7 +138,7 @@
   (let [entities {6 {:order 2}
                   5 {:order 1}
                   4 {:order 0}}
-        entities' (main/recalculate-entities-order entities [6 5 4])]
+        entities' (model/recalculate-entities-order entities [6 5 4])]
     (is (= entities' {6 {:order 0}
                       5 {:order 1}
                       4 {:order 2}}))
