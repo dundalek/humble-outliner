@@ -31,6 +31,12 @@
 
 ;; Events
 
+;; Experimenting with having event creator functions. The benefits are
+;; possibility to add parameter validation and use static analysis (like clj-kondo)
+;; to detect unused events.
+;; In practice these would return a data representation with implementation
+;; being separated.
+
 (defn focus-before [id]
   (fn [db]
     (if-some [focus-id (model/find-item-up (:entities db) id)]

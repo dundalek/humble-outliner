@@ -11,6 +11,10 @@
    [io.github.humbleui.ui.listeners :as listeners]
    [io.github.humbleui.ui.with-cursor :as with-cursor]))
 
+;; Components are couple to state directly, in practice we would likely use
+;; some kind of subscriptions. Would it make sense to make the `*db` available
+;; through context?
+
 (defn text-field [{:keys [id focused *state]}]
   (let [opts {:focused focused
               :on-focus (fn [] ; no parameters for on-focus

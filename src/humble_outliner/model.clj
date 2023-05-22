@@ -1,5 +1,9 @@
 (ns humble-outliner.model)
 
+;; Assumption the order is integer based and we re-number all children within
+;; a level. In practice we would likely use fractional indexing like:
+;; https://github.com/rocicorp/fractional-indexing
+
 (defn recalculate-entities-order [entities order]
   (reduce (fn [entities [order id]]
             (assoc-in entities [id :order] order))
