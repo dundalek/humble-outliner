@@ -21,23 +21,19 @@
 (defn reset-input-blink-state! [id]
   (swap! state/*input-states update id assoc :cursor-blink-pivot (core/now)))
 
+(defn focus-item!
+  ([db id] (focus-item! db id {:from 0 :to 0}))
+  ([db id {:keys [from to]}]
+   (update-input-state! db id assoc
+                        :from from
+                        :to to
+                        ;; reset blink state on focus so that cursor is always visible when switching focus and does not "disappear" for brief moments
+                        :cursor-blink-pivot (core/now))
+   (-> db (assoc :focused-id id))))
+
 (defn switch-focus! [db id]
   (let [{:keys [from]} (get @state/*input-states (:focused-id db) 0)]
-    (update-input-state! db id assoc
-                         :from from
-                         :to from
-                         ;; reset blink state on focus so that cursor is always visible when switching focus and does not "disappear" for brief moments
-                         :cursor-blink-pivot (core/now))
-    (-> db
-        (assoc :focused-id id))))
-
-(defn focus-item! [db id]
-  (update-input-state! db id assoc
-                       :from 0
-                       :to 0
-                       :cursor-blink-pivot (core/now))
-  (-> db
-      (assoc :focused-id id)))
+    (focus-item! db id {:from from :to from})))
 
 (defn stratify
   ([entities]
@@ -322,10 +318,8 @@
               (set-item-text merge-target-id new-text-above)
               (update :entities dissoc item-id)
               (update :entities reparent-items children-order merge-target-id)
-              (focus-item! merge-target-id)
-              (update-input-state! merge-target-id assoc
-                                   :from new-cursor-position
-                                   :to new-cursor-position)))
+              (focus-item! merge-target-id {:from new-cursor-position
+                                            :to new-cursor-position})))
         db))))
 
 (defn event-theme-toggled []
