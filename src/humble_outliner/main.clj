@@ -56,41 +56,23 @@
     (-> db
         (update-in [:entities id] assoc :text text))))
 
-(defn item-indent [entities id]
-  (let [parent-id (get-in entities [id :parent])
-        order (model/get-children-order entities parent-id)
-        above-idx (dec (model/index-of order id))
-        above-id (get order above-idx)]
-    (if above-id
-      (let [last-order (inc (->> entities
-                                 (filter #(= above-id (-> % val :parent)))
-                                 (map #(-> % val :order))
-                                 (reduce max -1)))]
-        (reset-input-blink-state! id)
-        (update entities id assoc
-                :parent above-id
-                :order last-order))
-      entities)))
-
-(defn item-outdent [entities id]
-  (if-some [parent-id (get-in entities [id :parent])]
-    (let [grad-parent-id (get-in entities [parent-id :parent])
-          order (-> (model/get-children-order entities grad-parent-id)
-                    (model/insert-after parent-id id))]
-      (reset-input-blink-state! id)
-      (-> entities
-          (model/indent-following-siblings id)
-          (assoc-in [id :parent] grad-parent-id)
-          (model/recalculate-entities-order order)))
-    entities))
-
 (defn event-item-indented [id]
-  (fn [db]
-    (update db :entities item-indent id)))
+  (fn [{:keys [entities] :as db}]
+    (let [new-entities (model/item-indent entities id)]
+      (if (identical? entities new-entities)
+        db
+        (do
+          (reset-input-blink-state! id)
+          (assoc db :entities new-entities))))))
 
 (defn event-item-outdented [id]
-  (fn [db]
-    (update db :entities item-outdent id)))
+  (fn [{:keys [entities] :as db}]
+    (let [new-entities (model/item-outdent entities id)]
+      (if (identical? entities new-entities)
+        db
+        (do
+          (reset-input-blink-state! id)
+          (assoc db :entities new-entities))))))
 
 (defn event-item-move-up [id]
   (fn [db]

@@ -163,31 +163,31 @@
     (is (= {6 {:order 2}
             5 {:order 0 :parent 4}
             4 {:order 0}}
-           (main/item-indent entities 5)))
+           (model/item-indent entities 5)))
 
     (is (= {6 {:order 1 :parent 4}
             5 {:order 0 :parent 4}
             4 {:order 0}}
            (-> entities
-               (main/item-indent 5)
-               (main/item-indent 6))))
+               (model/item-indent 5)
+               (model/item-indent 6))))
 
     (is (= {6 {:order 0 :parent 5}
             5 {:order 0 :parent 4}
             4 {:order 0}}
            (-> entities
-               (main/item-indent 5)
-               (main/item-indent 6)
-               (main/item-indent 6))))
+               (model/item-indent 5)
+               (model/item-indent 6)
+               (model/item-indent 6))))
 
     (testing "noop indenting first item"
-      (is (= entities (main/item-indent entities 4))))
+      (is (= entities (model/item-indent entities 4))))
 
     (testing "noop indenting first sub-item"
-      (is (= (main/item-indent entities 5)
+      (is (= (model/item-indent entities 5)
              (-> entities
-                 (main/item-indent 5)
-                 (main/item-indent 5)))))))
+                 (model/item-indent 5)
+                 (model/item-indent 5)))))))
 
 (deftest item-outdent
   (let [items [1
@@ -195,7 +195,7 @@
                   22 [221]]
                3]]
     (testing "noop outdenting top-level item"
-      (is (= items (update-compact items main/item-outdent 2))))
+      (is (= items (update-compact items model/item-outdent 2))))
 
     (testing "straightforward outdenting last item"
       (is (= [1
@@ -203,14 +203,14 @@
                  22
                  221]
               3]
-             (update-compact items main/item-outdent 221))))
+             (update-compact items model/item-outdent 221))))
 
     (testing "outdenting reparents siblings"
       (is (= [1
               2
               21 [22 [221]]
               3]
-             (update-compact items main/item-outdent 21))))))
+             (update-compact items model/item-outdent 21))))))
 
 (deftest last-child
   (let [entities {6 {:order 2}

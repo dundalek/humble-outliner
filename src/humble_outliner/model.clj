@@ -183,3 +183,29 @@
               (assoc-in [id :parent] next-parent-sibling)
               (recalculate-entities-order order)))
         entities))))
+
+(defn item-indent [entities id]
+  (let [parent-id (get-in entities [id :parent])
+        order (get-children-order entities parent-id)
+        above-idx (dec (index-of order id))
+        above-id (get order above-idx)]
+    (if above-id
+      (let [last-order (inc (->> entities
+                                 (filter #(= above-id (-> % val :parent)))
+                                 (map #(-> % val :order))
+                                 (reduce max -1)))]
+        (update entities id assoc
+                :parent above-id
+                :order last-order))
+      entities)))
+
+(defn item-outdent [entities id]
+  (if-some [parent-id (get-in entities [id :parent])]
+    (let [grad-parent-id (get-in entities [parent-id :parent])
+          order (-> (get-children-order entities grad-parent-id)
+                    (insert-after parent-id id))]
+      (-> entities
+          (indent-following-siblings id)
+          (assoc-in [id :parent] grad-parent-id)
+          (recalculate-entities-order order)))
+    entities))
