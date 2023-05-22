@@ -35,128 +35,15 @@
   (let [{:keys [from]} (get @state/*input-states (:focused-id db) 0)]
     (focus-item! db id {:from from :to from})))
 
-(defn stratify
-  ([entities]
-   (stratify (group-by #(-> % val :parent) entities) nil))
-  ([parent->children id]
-   (->> (parent->children id)
-        (sort-by #(-> % val :order))
-        (map (fn [[id value]]
-               (assoc value
-                      :id id
-                      :children (stratify parent->children id))))
-        (into []))))
-
-(comment
-  (stratify
-   {3 {:order 2}
-    2 {:order 1}
-    1 {:order 0}
-    5 {:order 1 :parent 1}
-    4 {:order 0 :parent 1}}))
-
-(defn index-of [coll e]
-  #_(first (keep-indexed #(when (= e %2) %1) coll))
-  (loop [i 0
-         coll (seq coll)]
-    (when (some? coll)
-      (if (= e (first coll))
-        i
-        (recur (inc i) (next coll))))))
-
-(defn insert-after [v target value]
-  (if-some [idx (some-> (index-of v target) inc)]
-    (into (conj (subvec v 0 idx) value)
-          (subvec v idx))
-    (conj v value)))
-
-(defn insert-before [v target value]
-  (if-some [idx (index-of v target)]
-    (into (conj (subvec v 0 idx) value)
-          (subvec v idx))
-    (into [value] v)))
-
-(defn remove-at [v idx]
-  (into (subvec v 0 idx)
-        (subvec v (inc idx))))
-
-(defn set-item-text [db id text]
-  (-> db
-      (update-in [:entities id] assoc :text text)))
-
-(defn get-children-order [entities parent-id]
-  (->> entities
-       (filter #(= parent-id (-> % val :parent)))
-       (sort-by #(-> % val :order))
-       (map key)
-       (into [])))
-
-(defn last-child [entities id]
-  (some->> entities
-           (filter #(= id (-> % val :parent)))
-           (sort-by #(-> % val :order))
-           last
-           key))
-
-(defn first-child [entities id]
-  (some->> entities
-           (filter #(= id (-> % val :parent)))
-           (sort-by #(-> % val :order))
-           first
-           key))
-
-(defn find-last-descendent [entities id]
-  (loop [id id]
-    (if-some [child-id (last-child entities id)]
-      (recur child-id)
-      id)))
-
-(defn find-prev-sibling [entities id]
-  ;; can return nil
-  (let [parent-id (get-in entities [id :parent])
-        order (get-children-order entities parent-id)
-        idx (index-of order id)]
-    (assert (some? idx))
-    (when (pos? idx)
-      (get order (dec idx)))))
-
-(defn find-item-up [entities id]
-  ;; can return nil
-  (if-some [prev-id (find-prev-sibling entities id)]
-    (find-last-descendent entities prev-id)
-    (get-in entities [id :parent])))
-
-(defn next-sibling [entities id]
-  (let [parent-id (get-in entities [id :parent])
-        order (get-children-order entities parent-id)
-        idx (index-of order id)
-        _ (assert (some? idx))
-        last-item? (= idx (dec (count order)))]
-    (when-not last-item?
-      (get order (inc idx)))))
-
-(defn find-next-successor [entities id]
-  (loop [id id]
-    (if-some [sibling-id (next-sibling entities id)]
-      sibling-id
-      (when-some [parent-id (get-in entities [id :parent])]
-        (recur parent-id)))))
-
-(defn find-item-down [entities id]
-  ;; can return nil
-  (if-some [child-id (first-child entities id)]
-    child-id
-    (find-next-successor entities id)))
-
 (defn action-focus-before [id]
   (fn [db]
-    (if-some [focus-id (find-item-up (:entities db) id)]
+    (if-some [focus-id (model/find-item-up (:entities db) id)]
       (switch-focus! db focus-id)
       db)))
 
 (defn action-focus-after [id]
   (fn [db]
-    (if-some [focus-id (find-item-down (:entities db) id)]
+    (if-some [focus-id (model/find-item-down (:entities db) id)]
       (switch-focus! db focus-id)
       db)))
 
@@ -171,8 +58,8 @@
 
 (defn item-indent [entities id]
   (let [parent-id (get-in entities [id :parent])
-        order (get-children-order entities parent-id)
-        above-idx (dec (index-of order id))
+        order (model/get-children-order entities parent-id)
+        above-idx (dec (model/index-of order id))
         above-id (get order above-idx)]
     (if above-id
       (let [last-order (inc (->> entities
@@ -185,26 +72,14 @@
                 :order last-order))
       entities)))
 
-(defn reparent-items [entities item-ids new-parent-id]
-  (reduce (fn [entities sibling-id]
-            (update entities sibling-id assoc :parent new-parent-id))
-          entities
-          item-ids))
-
-(defn indent-following-siblings [entities id]
-  (let [order (get-children-order entities (get-in entities [id :parent]))
-        idx (index-of order id)
-        following-siblings (subvec order (inc idx))]
-    (reparent-items entities following-siblings id)))
-
 (defn item-outdent [entities id]
   (if-some [parent-id (get-in entities [id :parent])]
     (let [grad-parent-id (get-in entities [parent-id :parent])
-          order (-> (get-children-order entities grad-parent-id)
-                    (insert-after parent-id id))]
+          order (-> (model/get-children-order entities grad-parent-id)
+                    (model/insert-after parent-id id))]
       (reset-input-blink-state! id)
       (-> entities
-          (indent-following-siblings id)
+          (model/indent-following-siblings id)
           (assoc-in [id :parent] grad-parent-id)
           (model/recalculate-entities-order order)))
     entities))
@@ -217,66 +92,13 @@
   (fn [db]
     (update db :entities item-outdent id)))
 
-(defn item-add [entities target-id new-id]
-  (let [order (get-children-order entities target-id)
-        has-children? (seq order)]
-    (if has-children?
-      (-> entities
-          (update new-id assoc :parent target-id)
-          (model/recalculate-entities-order (into [new-id] order)))
-      (let [parent-id (get-in entities [target-id :parent])
-            order (-> (get-children-order entities parent-id)
-                      (insert-after target-id new-id))]
-        (-> entities
-            (update new-id assoc :parent parent-id)
-            (model/recalculate-entities-order order))))))
-
-(defn item-move-up [entities id]
-  (let [parent-id (get-in entities [id :parent])
-        order (get-children-order entities parent-id)
-        idx (index-of order id)
-        above-idx (dec idx)
-        above-id (get order above-idx)]
-    (if above-id
-      (let [new-order (assoc order
-                             idx above-id
-                             above-idx id)]
-        (model/recalculate-entities-order entities new-order))
-      (if-some [previous-parent-sibling (when parent-id
-                                          (find-prev-sibling entities parent-id))]
-        (let [order (-> (get-children-order entities previous-parent-sibling)
-                        (conj id))]
-          (-> entities
-              (assoc-in [id :parent] previous-parent-sibling)
-              (model/recalculate-entities-order order)))
-        entities))))
-
-(defn item-move-down [entities id]
-  (let [parent-id (get-in entities [id :parent])
-        order (get-children-order entities parent-id)
-        idx (index-of order id)
-        below-idx (inc idx)
-        below-id (get order below-idx)]
-    (if below-id
-      (let [new-order (assoc order
-                             idx below-id
-                             below-idx id)]
-        (model/recalculate-entities-order entities new-order))
-      (if-some [next-parent-sibling (when parent-id
-                                      (next-sibling entities parent-id))]
-        (let [order (into [id] (get-children-order entities next-parent-sibling))]
-          (-> entities
-              (assoc-in [id :parent] next-parent-sibling)
-              (model/recalculate-entities-order order)))
-        entities))))
-
 (defn event-item-move-up [id]
   (fn [db]
-    (update db :entities item-move-up id)))
+    (update db :entities model/item-move-up id)))
 
 (defn event-item-move-down [id]
   (fn [db]
-    (update db :entities item-move-down id)))
+    (update db :entities model/item-move-down id)))
 
 (defn event-item-enter-pressed [target-id from]
   (fn [db]
@@ -287,37 +109,37 @@
               new-text (subs existing-text from)]
           (-> db
               (update :next-id inc)
-              (set-item-text target-id new-current-text)
-              (set-item-text next-id new-text)
-              (update :entities item-add target-id next-id)
+              (model/set-item-text target-id new-current-text)
+              (model/set-item-text next-id new-text)
+              (update :entities model/item-add target-id next-id)
               (focus-item! next-id)))
         (let [parent-id (get-in db [:entities target-id :parent])
-              order (-> (get-children-order (:entities db) parent-id)
-                        (insert-before target-id next-id))]
+              order (-> (model/get-children-order (:entities db) parent-id)
+                        (model/insert-before target-id next-id))]
           (-> db
               (update :next-id inc)
-              (set-item-text next-id "")
+              (model/set-item-text next-id "")
               (assoc-in [:entities next-id :parent] parent-id)
               (update :entities model/recalculate-entities-order order)))))))
 
 (defn event-item-beginning-backspace-pressed [item-id]
   (fn [db]
     (let [{:keys [entities]} db
-          sibling-id (find-prev-sibling entities item-id)
-          children-order (get-children-order entities item-id)
+          sibling-id (model/find-prev-sibling entities item-id)
+          children-order (model/get-children-order entities item-id)
           merge-allowed? (or (zero? (count children-order))
                              (and sibling-id
-                                  (zero? (count (get-children-order entities sibling-id)))))]
+                                  (zero? (count (model/get-children-order entities sibling-id)))))]
       (if-some [merge-target-id (when merge-allowed?
-                                  (find-item-up entities item-id))]
+                                  (model/find-item-up entities item-id))]
         (let [text (get-in entities [item-id :text])
               text-above (get-in entities [merge-target-id :text])
               new-text-above (str (str/trimr text-above) text)
               new-cursor-position (count text-above)]
           (-> db
-              (set-item-text merge-target-id new-text-above)
+              (model/set-item-text merge-target-id new-text-above)
               (update :entities dissoc item-id)
-              (update :entities reparent-items children-order merge-target-id)
+              (update :entities model/reparent-items children-order merge-target-id)
               (focus-item! merge-target-id {:from new-cursor-position
                                             :to new-cursor-position})))
         db))))
@@ -445,7 +267,7 @@
               (ui/padding 20 0 20 80
                 (ui/column
                   (ui/dynamic _ [items (->> (:entities @state/*db)
-                                            (stratify))]
+                                            (model/stratify))]
                     (outline-tree items)))))))))))
 
 (defn window []
