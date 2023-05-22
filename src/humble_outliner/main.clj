@@ -2,11 +2,10 @@
   "The main app namespace.
   Responsible for initializing the window and app state when the app starts."
   (:require
-   [clojure.string :as str]
+   [humble-outliner.events :as events]
    [humble-outliner.model :as model]
    [humble-outliner.state :as state :refer [dispatch!]]
    [humble-outliner.theme :as theme]
-   [io.github.humbleui.core :as core]
    [io.github.humbleui.cursor :as cursor]
    [io.github.humbleui.ui :as ui]
    [io.github.humbleui.ui.clip :as clip]
@@ -14,133 +13,17 @@
    [io.github.humbleui.ui.listeners :as listeners]
    [io.github.humbleui.ui.with-cursor :as with-cursor]))
 
-(defn update-input-state! [db id f & args]
-  (apply swap! state/*input-states update id f args)
-  db)
-
-(defn reset-input-blink-state! [id]
-  (swap! state/*input-states update id assoc :cursor-blink-pivot (core/now)))
-
-(defn focus-item!
-  ([db id] (focus-item! db id {:from 0 :to 0}))
-  ([db id {:keys [from to]}]
-   (update-input-state! db id assoc
-                        :from from
-                        :to to
-                        ;; reset blink state on focus so that cursor is always visible when switching focus and does not "disappear" for brief moments
-                        :cursor-blink-pivot (core/now))
-   (-> db (assoc :focused-id id))))
-
-(defn switch-focus! [db id]
-  (let [{:keys [from]} (get @state/*input-states (:focused-id db) 0)]
-    (focus-item! db id {:from from :to from})))
-
-(defn action-focus-before [id]
-  (fn [db]
-    (if-some [focus-id (model/find-item-up (:entities db) id)]
-      (switch-focus! db focus-id)
-      db)))
-
-(defn action-focus-after [id]
-  (fn [db]
-    (if-some [focus-id (model/find-item-down (:entities db) id)]
-      (switch-focus! db focus-id)
-      db)))
-
-(defn event-item-input-focused [id]
-  (fn [db]
-    (-> db (assoc :focused-id id))))
-
-(defn event-item-input-changed [id text]
-  (fn [db]
-    (-> db
-        (update-in [:entities id] assoc :text text))))
-
-(defn event-item-indented [id]
-  (fn [{:keys [entities] :as db}]
-    (let [new-entities (model/item-indent entities id)]
-      (if (identical? entities new-entities)
-        db
-        (do
-          (reset-input-blink-state! id)
-          (assoc db :entities new-entities))))))
-
-(defn event-item-outdented [id]
-  (fn [{:keys [entities] :as db}]
-    (let [new-entities (model/item-outdent entities id)]
-      (if (identical? entities new-entities)
-        db
-        (do
-          (reset-input-blink-state! id)
-          (assoc db :entities new-entities))))))
-
-(defn event-item-move-up [id]
-  (fn [db]
-    (update db :entities model/item-move-up id)))
-
-(defn event-item-move-down [id]
-  (fn [db]
-    (update db :entities model/item-move-down id)))
-
-(defn event-item-enter-pressed [target-id from]
-  (fn [db]
-    (let [{:keys [next-id]} db
-          existing-text (get-in db [:entities target-id :text])]
-      (if (pos? from)
-        (let [new-current-text (subs existing-text 0 from)
-              new-text (subs existing-text from)]
-          (-> db
-              (update :next-id inc)
-              (model/set-item-text target-id new-current-text)
-              (model/set-item-text next-id new-text)
-              (update :entities model/item-add target-id next-id)
-              (focus-item! next-id)))
-        (let [parent-id (get-in db [:entities target-id :parent])
-              order (-> (model/get-children-order (:entities db) parent-id)
-                        (model/insert-before target-id next-id))]
-          (-> db
-              (update :next-id inc)
-              (model/set-item-text next-id "")
-              (assoc-in [:entities next-id :parent] parent-id)
-              (update :entities model/recalculate-entities-order order)))))))
-
-(defn event-item-beginning-backspace-pressed [item-id]
-  (fn [db]
-    (let [{:keys [entities]} db
-          sibling-id (model/find-prev-sibling entities item-id)
-          children-order (model/get-children-order entities item-id)
-          merge-allowed? (or (zero? (count children-order))
-                             (and sibling-id
-                                  (zero? (count (model/get-children-order entities sibling-id)))))]
-      (if-some [merge-target-id (when merge-allowed?
-                                  (model/find-item-up entities item-id))]
-        (let [text (get-in entities [item-id :text])
-              text-above (get-in entities [merge-target-id :text])
-              new-text-above (str (str/trimr text-above) text)
-              new-cursor-position (count text-above)]
-          (-> db
-              (model/set-item-text merge-target-id new-text-above)
-              (update :entities dissoc item-id)
-              (update :entities model/reparent-items children-order merge-target-id)
-              (focus-item! merge-target-id {:from new-cursor-position
-                                            :to new-cursor-position})))
-        db))))
-
-(defn event-theme-toggled []
-  (fn [db]
-    (update db :theme theme/next-theme)))
-
 (defn text-field [{:keys [id focused *state]}]
   (let [opts {:focused focused
               :on-focus (fn [] ; no parameters for on-focus
                           ; (println "on-focus" id)
-                          (dispatch! (event-item-input-focused id)))
+                          (dispatch! (events/item-input-focused id)))
               :on-change (fn [{:keys [text]}]
                            ; (println "on-change" id)
-                           (dispatch! (event-item-input-changed id text)))}
-        keymap {:enter #(dispatch! (event-item-enter-pressed id (:from @*state)))
-                :up #(dispatch! (action-focus-before id))
-                :down #(dispatch! (action-focus-after id))}]
+                           (dispatch! (events/item-input-changed id text)))}
+        keymap {:enter #(dispatch! (events/item-enter-pressed id (:from @*state)))
+                :up #(dispatch! (events/focus-before id))
+                :down #(dispatch! (events/focus-after id))}]
     (ui/with-context {:hui.text-field/cursor-blink-interval 500
                       :hui.text-field/cursor-width          1
                       :hui.text-field/padding-top           (float 8)
@@ -155,23 +38,23 @@
                 (and (= :backspace (:key e))
                      (zero? (:from @*state))
                      (zero? (:to @*state)))
-                (do (dispatch! (event-item-beginning-backspace-pressed id))
+                (do (dispatch! (events/item-beginning-backspace-pressed id))
                     true)
 
                 (and (= :tab (:key e))
                      (:shift (:modifiers e)))
-                (dispatch! (event-item-outdented id))
+                (dispatch! (events/item-outdented id))
 
                 (= :tab (:key e))
-                (dispatch! (event-item-indented id))
+                (dispatch! (events/item-indented id))
 
                 (and (= :up (:key e))
                      (= #{:shift :alt} (:modifiers e)))
-                (dispatch! (event-item-move-up id))
+                (dispatch! (events/item-move-up id))
 
                 (and (= :down (:key e))
                      (= #{:shift :alt} (:modifiers e)))
-                (dispatch! (event-item-move-down id)))))
+                (dispatch! (events/item-move-down id)))))
 
           (listeners/on-key-focused keymap
             (with-cursor/with-cursor :ibeam
@@ -230,7 +113,7 @@
   (ui/row
     [:stretch 1 nil]
     (ui/padding 6
-      (ui/button #(dispatch! (event-theme-toggled))
+      (ui/button #(dispatch! (events/theme-toggled))
         (ui/label "Switch theme")))))
 
 (def app

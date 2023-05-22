@@ -2,7 +2,7 @@
   (:require
    [clojure.test :refer [are deftest is testing]]
    [clojure.walk :as walk]
-   [humble-outliner.main :as main]
+   [humble-outliner.events :as events]
    [humble-outliner.model :as model]))
 
 (defn to-compact-impl
@@ -289,7 +289,7 @@
         db {:entities entities
             :focused-id "b"
             :next-id 1}
-        result ((main/event-item-enter-pressed "b" 0) db)]
+        result ((events/item-enter-pressed "b" 0) db)]
     (is (= ["a"
             ""
             "b" ["ba"
@@ -304,13 +304,13 @@
                      (assoc-in [2 :text] "def"))]
     (testing "without children"
       (testing "top-level has sibling before without children, merge into it"
-        (let [result ((main/event-item-beginning-backspace-pressed 2) {:entities entities})]
+        (let [result ((events/item-beginning-backspace-pressed 2) {:entities entities})]
           (is (= [1 3] (to-compact (:entities result))))
           (is (= 1 (:focused-id result)))
           (is (= "abcdef" (get-in result [:entities 1 :text])))))
       (testing "strips trailing spaces when merging item text"
         (let [entities (-> entities (assoc-in [1 :text] "abc   "))
-              result ((main/event-item-beginning-backspace-pressed 2) {:entities entities})]
+              result ((events/item-beginning-backspace-pressed 2) {:entities entities})]
           (is (= [1 3] (to-compact (:entities result))))
           (is (= 1 (:focused-id result)))
           (is (= "abcdef" (get-in result [:entities 1 :text])))))
@@ -323,7 +323,7 @@
               entities (-> (from-compact items)
                            (assoc-in [122 :text] "abc")
                            (assoc-in [13 :text] "def"))
-              result ((main/event-item-beginning-backspace-pressed 13) {:entities entities})]
+              result ((events/item-beginning-backspace-pressed 13) {:entities entities})]
           (is (= [1 [11
                      12 [121
                          122]]
@@ -340,7 +340,7 @@
               entities (-> (from-compact items)
                            (assoc-in [122 :text] "abc")
                            (assoc-in [2 :text] "def"))
-              result ((main/event-item-beginning-backspace-pressed 2) {:entities entities})]
+              result ((events/item-beginning-backspace-pressed 2) {:entities entities})]
           (is (= [1 [11
                      12 [121
                          122]]
@@ -355,14 +355,14 @@
               entities (-> (from-compact items)
                            (assoc-in [1 :text] "abc")
                            (assoc-in [11 :text] "def"))
-              result ((main/event-item-beginning-backspace-pressed 11) {:entities entities})]
+              result ((events/item-beginning-backspace-pressed 11) {:entities entities})]
           (is (= [1 [12]
                   2]
                  (to-compact (:entities result))))
           (is (= 1 (:focused-id result)))
           (is (= "abcdef" (get-in result [:entities 1 :text])))))
       (testing "is first top-level item, noop"
-        (is (= entities (:entities ((main/event-item-beginning-backspace-pressed 1) {:entities entities}))))))
+        (is (= entities (:entities ((events/item-beginning-backspace-pressed 1) {:entities entities}))))))
     (testing "with children"
       (testing "has sibling before without children, merge into it and reparent children"
         (let [items [1
@@ -377,7 +377,7 @@
                            (assoc-in [21 :text] "abc2")
                            (assoc-in [22 :text] "def2"))]
           (testing "nested"
-            (let [result ((main/event-item-beginning-backspace-pressed 22) {:entities entities})]
+            (let [result ((events/item-beginning-backspace-pressed 22) {:entities entities})]
               (is (= [1
                       2 [21 [221
                              222]
@@ -387,7 +387,7 @@
               (is (= 21 (:focused-id result)))
               (is (= "abc2def2" (get-in result [:entities 21 :text])))))
           (testing "top-level"
-            (let [result ((main/event-item-beginning-backspace-pressed 2) {:entities entities})]
+            (let [result ((events/item-beginning-backspace-pressed 2) {:entities entities})]
               (is (= [1 [21
                          22 [221
                              222]
@@ -401,19 +401,19 @@
                         12]
                      2 [21]]
               entities (-> (from-compact items))
-              result ((main/event-item-beginning-backspace-pressed 2) {:entities entities})]
+              result ((events/item-beginning-backspace-pressed 2) {:entities entities})]
           (is (= items (to-compact (:entities result))))))
       (testing "is first child, noop"
         (let [items [1 [11 [111 112]
                         12]]
               entities (-> (from-compact items))
-              result ((main/event-item-beginning-backspace-pressed 11) {:entities entities})]
+              result ((events/item-beginning-backspace-pressed 11) {:entities entities})]
           (is (= items (to-compact (:entities result))))))
       (testing "is first top-level item, noop"
         (let [items [1 [11
                         12]]
               entities (-> (from-compact items))
-              result ((main/event-item-beginning-backspace-pressed 1) {:entities entities})]
+              result ((events/item-beginning-backspace-pressed 1) {:entities entities})]
           (is (= items (to-compact (:entities result)))))))))
 
 (deftest item-move-up
