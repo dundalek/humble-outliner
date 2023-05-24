@@ -1,5 +1,6 @@
 (ns humble-outliner.views
   (:require
+   [humble-outliner.demo :as demo]
    [humble-outliner.events :as events]
    [humble-outliner.model :as model]
    [humble-outliner.state :as state :refer [dispatch!]]
@@ -83,7 +84,7 @@
         (dot)
         dot-spacer)
       (ui/gap 12 0)
-      (ui/width 300
+      (ui/width 500
         (text-field {:id id
                      :focused focused
                      :*state *state})))))
@@ -114,7 +115,17 @@
     [:stretch 1 nil]
     (ui/padding 6
       (ui/button #(dispatch! (events/theme-toggled))
-        (ui/label "Switch theme")))))
+        (ui/label "Switch theme")))
+    (ui/padding 6
+      (ui/button #(dispatch! (events/clear-items))
+        (ui/label "Clear items")))
+    (ui/padding 6
+      (ui/button (fn []
+                   ;; Good enough for demo, but potentially bad things waiting
+                   ;; to happen as the handlers will run on the driving thread.
+                   ;; Ideally, the events would be processed on the main UI thread.
+                   (.start (Thread. demo/play-demo!)))
+        (ui/label "Play Demo")))))
 
 (def app
   ; we must wrap our app in a theme

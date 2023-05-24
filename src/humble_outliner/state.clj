@@ -19,10 +19,11 @@
 
 (def default-db
   (let [entities
-        {1 {:text "hello"}
-         2 {:text "world"}
-         3 {:text "abc"}
-         4 {:text "cdf" :parent 3}}
+        {1 {:text ""}}
+        #_{1 {:text "hello"}
+           2 {:text "world"}
+           3 {:text "abc"}
+           4 {:text "cdf" :parent 3}}
         #_(->> (range 50)
                (map (fn [i]
                       [i {:text (str "Item " i)}]))

@@ -132,3 +132,10 @@
 (defn theme-toggled []
   (fn [db]
     (update db :theme theme/next-theme)))
+
+(defn clear-items []
+  (fn [db]
+    (-> db
+        (assoc :entities {1 {:text "" :order 0}})
+        (focus-item! 1))))
+
