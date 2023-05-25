@@ -5,7 +5,7 @@ This is a demo project implementing an outliner view inspired by [Logseq](https:
 It is based on the [humble-starter](https://github.com/lilactown/humble-starter) template.  
 The focus of the demo is on the UI, it is not indented for use as it does not store data permanently.
 
-[demo video here]
+https://github.com/dundalek/humble-outliner/assets/755611/c8103408-84c6-491c-a253-d25c24b7189c
 
 ## Features
 
