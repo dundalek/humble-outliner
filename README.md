@@ -19,7 +19,7 @@ The focus of the demo is on the UI, it is not indented for use as it does not st
 
 ## Not Implemented
 
-Features they might be interesting to implement as an exercise some day.
+Features they might be interesting to implement as an exercise in the future:
 
 - [ ] block-wise selection
 - [ ] collapse/expand
@@ -47,7 +47,7 @@ script/nrepl.sh
 
 Run tests with:
 ```sh
-clojure -M:test
+clj -M:test
 ```
 
 Run tests with alternative reporter:
@@ -57,12 +57,12 @@ clj -M:test --reporter kaocha.report/documentation
 
 Run tests in watch mode:
 ```sh
-clojure -M:test --watch
+clj -M:test --watch
 ```
 
 Generate code coverage report:
 ```sh
-clojure -M:test:coverage
+clj -M:test:coverage
 ```
 
 ### Reloading
@@ -76,7 +76,7 @@ To reload the app and see your changes reflected, you can:
    to detect which ns' should be refreshed, evaluate them, and then call
    `state/redraw!`.
 
-## License & Copyright
+## License
 
 Licensed under MIT.  
 Copyright Jakub Dundalek 2023.  
