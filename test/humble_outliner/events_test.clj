@@ -6,18 +6,35 @@
 
 (deftest event-item-enter-pressed
   (let [entities (from-compact-by-text ["a"
-                                        "b" ["ba"
+                                        "b" ["xy"
                                              "bb"]])
         db {:entities entities
             :focused-id "b"
-            :next-id 1}
-        result ((events/item-enter-pressed "b" 0) db)]
-    (is (= ["a"
-            ""
-            "b" ["ba"
-                 "bb"]]
-           (to-compact-by-text (:entities result))))
-    (is (= "b" (get-in result [:entities (:focused-id result) :text])))))
+            :next-id 1}]
+    (testing "adds empty item when pressing enter at the beginning of item"
+      (let [result ((events/item-enter-pressed "b" 0) db)]
+        (is (= ["a"
+                ""
+                "b" ["xy"
+                     "bb"]]
+               (to-compact-by-text (:entities result))))
+        (is (= "b" (get-in result [:entities (:focused-id result) :text])))))
+    (testing "adds child item when pressing enter at the end of a parent"
+      (let [result ((events/item-enter-pressed "b" 1) db)]
+        (is (= ["a"
+                "b" [""
+                     "xy"
+                     "bb"]]
+               (to-compact-by-text (:entities result))))
+        (is (= "" (get-in result [:entities (:focused-id result) :text])))))
+    (testing "splits item when pressing enter somewhere in the middle"
+      (let [result ((events/item-enter-pressed "xy" 1) db)]
+        (is (= ["a"
+                "b" ["x"
+                     "y"
+                     "bb"]]
+               (to-compact-by-text (:entities result))))
+        (is (= "y" (get-in result [:entities (:focused-id result) :text])))))))
 
 (deftest item-backspace
   (let [items [1 2 3]
