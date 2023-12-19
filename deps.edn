@@ -1,5 +1,7 @@
 {:paths ["src"]
- :deps {io.github.humbleui/humbleui {:git/sha "d7c2915b4900d34b727cd2006ff0f8cca1907242"}}
+ :deps {;io.github.humbleui/humbleui {:git/sha "d7c2915b4900d34b727cd2006ff0f8cca1907242"}
+        io.github.dundalek/humbleui {:git/sha "93432ffec2a9e412c5994978f32a73a0f7a3ebb8"}}
+
  :aliases
  {:dev {:extra-paths ["dev"]
         :extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}
@@ -11,4 +13,9 @@
          :extra-deps {lambdaisland/kaocha {:mvn/version "1.78.1249"}}}
 
   :coverage {:extra-deps {lambdaisland/kaocha-cloverage {:mvn/version "1.1.89"}}
-             :main-opts ["-m" "kaocha.runner" "--plugin" "cloverage"]}}}
+             :main-opts ["-m" "kaocha.runner" "--plugin" "cloverage"]}
+
+  :build {:deps {io.github.humbleui/jwm {:mvn/version "0.4.16"} ; using JWM during build time for platform detection
+                 io.github.clojure/tools.build {:mvn/version "0.9.4"}
+                 babashka/process {:mvn/version "0.5.21"}}
+          :ns-default build}}}

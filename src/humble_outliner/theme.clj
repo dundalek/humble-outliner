@@ -6,7 +6,7 @@
 (defn make-theme [opts]
   (assoc opts :cap-height 12))
 
-(def light
+(defn make-light []
   (let [background-fill (paint/fill 0xFFFFFFFF)]
     (make-theme {:fill-text (paint/fill 0xFF000000)
                  ::background-fill background-fill
@@ -16,7 +16,7 @@
                  :hui.button/bg-hovered (paint/fill 0xFFE9E9E9)
                  :hui.button/bg-active (paint/fill 0xFFF0F0F0)})))
 
-(def dark
+(defn make-dark []
   (let [background-fill (paint/fill 0xFF002B36)]
     (make-theme {:fill-text (paint/fill 0xFF93A1A1)
                  ::background-fill background-fill
@@ -26,16 +26,16 @@
                  :hui.button/bg-hovered (paint/fill 0xFF003C48)
                  :hui.button/bg-active (paint/fill 0xFF003742)})))
 
-(def themes
-  {:light light
-   :dark dark})
+(def *themes
+  (delay {:light (make-light)
+          :dark (make-dark)}))
 
 (def default-theme :light)
 
 (defn with-theme
   ([comp] (with-theme default-theme comp))
   ([theme comp]
-   (ui/default-theme (themes theme) comp)))
+   (ui/default-theme (@*themes theme) comp)))
 
 (defn next-theme [current-theme]
   (if (= current-theme :light)

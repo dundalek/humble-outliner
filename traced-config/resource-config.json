@@ -1,0 +1,337 @@
+{
+  "resources":{
+  "includes":[{
+    "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
+  }, {
+    "pattern":"\\Qclojure/core.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/core/protocols.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/core/protocols__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/core/server.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/core/server__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/core__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/core_deftype.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/core_deftype__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/core_print.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/core_print__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/core_proxy.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/core_proxy__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/edn.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/edn__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/genclass.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/genclass__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/gvec.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/gvec__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/instant.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/instant__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/java/io.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/java/io__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/main.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/main__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/math.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/math__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/set.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/set__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/spec/alpha.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/spec/alpha__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/spec/gen/alpha.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/spec/gen/alpha__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/stacktrace.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/stacktrace__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/string.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/string__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/uuid.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/uuid__init.class\\E"
+  }, {
+    "pattern":"\\Qclojure/version.properties\\E"
+  }, {
+    "pattern":"\\Qclojure/walk.clj\\E"
+  }, {
+    "pattern":"\\Qclojure/walk__init.class\\E"
+  }, {
+    "pattern":"\\Qdata_readers.clj\\E"
+  }, {
+    "pattern":"\\Qdata_readers.cljc\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/demo.clj\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/demo__init.class\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/events.clj\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/events__init.class\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/main.clj\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/main__init.class\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/model.clj\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/model__init.class\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/state.clj\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/state__init.class\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/theme.clj\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/theme__init.class\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/views.clj\\E"
+  }, {
+    "pattern":"\\Qhumble_outliner/views__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/app.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/app__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/canvas.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/canvas__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/clipboard.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/clipboard__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/core.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/core__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/cursor.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/cursor__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/debug.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/debug__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/error.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/error__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/event.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/event__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/font.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/font__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/fonts/Inter-Regular.ttf\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/paint.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/paint__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/protocols.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/protocols__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/skija/impl/Library.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/skija/linux/x64/libskija.so\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/skija/linux/x64/skija.version\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/typeface.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/typeface__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/align.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/align__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/animation.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/animation__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/backdrop.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/backdrop__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/button.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/button__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/canvas.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/canvas__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/checkbox.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/checkbox__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/clickable.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/clickable__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/clip.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/clip__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/containers.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/containers__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/draggable.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/draggable__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/dynamic.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/dynamic__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/focusable.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/focusable__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/gap.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/gap__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/grid.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/grid__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/hoverable.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/hoverable__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/image.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/image__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/image_snapshot.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/image_snapshot__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/label.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/label__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/listeners.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/listeners__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/padding.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/padding__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/paragraph.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/paragraph__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/rect.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/rect__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/scroll.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/scroll__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/shadow.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/shadow__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/sizing.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/sizing__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/slider.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/slider__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/stack.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/stack__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/svg.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/svg__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/text_field.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/text_field__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/theme.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/theme__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/toggle.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/toggle__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/tooltip.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/tooltip__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/window.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/window__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/with_bounds.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/with_bounds__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/with_context.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/with_context__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/with_cursor.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui/with_cursor__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/ui__init.class\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/window.clj\\E"
+  }, {
+    "pattern":"\\Qio/github/humbleui/window__init.class\\E"
+  }, {
+    "pattern":"\\Qjwm.version\\E"
+  }, {
+    "pattern":"\\Qlibjwm_x64.so\\E"
+  }, {
+    "pattern":"\\Quser.clj\\E"
+  }]},
+  "bundles":[]
+}

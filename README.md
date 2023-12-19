@@ -38,6 +38,25 @@ Run the app with:
 script/run.sh
 ```
 
+### Building executable with GraalVM native-image
+
+Make sure to have `GRAALVM_HOME` env variable pointing to your GraalVM installation, e.g.:
+```sh
+export GRAALVM_HOME="$HOME/Downloads/graalvm-jdk-21.0.1+12.1"
+```
+
+Compile with:
+```sh
+clj -T:build native
+```
+
+Run the executable:
+```sh
+target/outliner
+```
+
+See [humble-graal](https://github.com/dundalek/humble-graal) for more details.
+
 ## Development
 
 Run the app including nREPL server:

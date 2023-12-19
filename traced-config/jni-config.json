@@ -1,0 +1,334 @@
+[
+{
+  "name":"[Lio.github.humbleui.jwm.Screen;"
+},
+{
+  "name":"io.github.humbleui.jwm.Clipboard",
+  "methods":[{"name":"_registerPredefinedFormat","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.ClipboardEntry",
+  "fields":[{"name":"_data"}, {"name":"_format"}],
+  "methods":[{"name":"make","parameterTypes":["io.github.humbleui.jwm.ClipboardFormat","byte[]"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.ClipboardFormat",
+  "fields":[{"name":"_formatId"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventFrame",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventKey",
+  "methods":[{"name":"<init>","parameterTypes":["int","boolean","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventMouseButton",
+  "methods":[{"name":"<init>","parameterTypes":["int","boolean","int","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventMouseMove",
+  "methods":[{"name":"<init>","parameterTypes":["int","int","int","int","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventMouseScroll",
+  "methods":[{"name":"<init>","parameterTypes":["float","float","float","float","float","int","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventTextInput",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventTextInputMarked",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","int","int","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventTouchCancel",
+  "methods":[{"name":"<init>","parameterTypes":["int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventTouchEnd",
+  "methods":[{"name":"<init>","parameterTypes":["int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventTouchMove",
+  "methods":[{"name":"<init>","parameterTypes":["int","float","float"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventTouchStart",
+  "methods":[{"name":"<init>","parameterTypes":["int","float","float","int","float","float","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowCloseRequest",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowFocusIn",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowFocusOut",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowFullScreenEnter",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowFullScreenExit",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowMaximize",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowMinimize",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowMove",
+  "methods":[{"name":"<init>","parameterTypes":["int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowResize",
+  "methods":[{"name":"<init>","parameterTypes":["int","int","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowRestore",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.EventWindowScreenChange",
+  "fields":[{"name":"INSTANCE"}]
+},
+{
+  "name":"io.github.humbleui.jwm.LayerNotSupportedException"
+},
+{
+  "name":"io.github.humbleui.jwm.Screen",
+  "methods":[{"name":"<init>","parameterTypes":["long","boolean","io.github.humbleui.types.IRect","io.github.humbleui.types.IRect","float"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.TextInputClient",
+  "methods":[{"name":"getMarkedRange","parameterTypes":[] }, {"name":"getRectForMarkedRange","parameterTypes":["int","int"] }, {"name":"getSelectedRange","parameterTypes":[] }, {"name":"getSubstring","parameterTypes":["int","int"] }]
+},
+{
+  "name":"io.github.humbleui.jwm.Window",
+  "fields":[{"name":"_textInputClient"}]
+},
+{
+  "name":"io.github.humbleui.jwm.impl.Native",
+  "fields":[{"name":"_ptr"}]
+},
+{
+  "name":"io.github.humbleui.skija.AnimationFrameInfo",
+  "methods":[{"name":"<init>","parameterTypes":["int","int","boolean","int","boolean","int","int","io.github.humbleui.types.IRect"] }]
+},
+{
+  "name":"io.github.humbleui.skija.Color4f",
+  "methods":[{"name":"<init>","parameterTypes":["float","float","float","float"] }]
+},
+{
+  "name":"io.github.humbleui.skija.Drawable",
+  "methods":[{"name":"_onDraw","parameterTypes":["long"] }, {"name":"onGetBounds","parameterTypes":[] }]
+},
+{
+  "name":"io.github.humbleui.skija.FontFamilyName",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String"] }]
+},
+{
+  "name":"io.github.humbleui.skija.FontFeature",
+  "fields":[{"name":"_end"}, {"name":"_start"}, {"name":"_tag"}, {"name":"_value"}],
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","int"] }]
+},
+{
+  "name":"io.github.humbleui.skija.FontMetrics",
+  "methods":[{"name":"<init>","parameterTypes":["float","float","float","float","float","float","float","float","float","float","float","java.lang.Float","java.lang.Float","java.lang.Float","java.lang.Float"] }]
+},
+{
+  "name":"io.github.humbleui.skija.FontMgr"
+},
+{
+  "name":"io.github.humbleui.skija.FontVariation",
+  "fields":[{"name":"_tag"}, {"name":"_value"}],
+  "methods":[{"name":"<init>","parameterTypes":["int","float"] }]
+},
+{
+  "name":"io.github.humbleui.skija.FontVariationAxis",
+  "methods":[{"name":"<init>","parameterTypes":["int","float","float","float","boolean"] }]
+},
+{
+  "name":"io.github.humbleui.skija.ImageInfo",
+  "methods":[{"name":"<init>","parameterTypes":["int","int","int","int","long"] }]
+},
+{
+  "name":"io.github.humbleui.skija.PaintFilterCanvas",
+  "methods":[{"name":"onFilter","parameterTypes":["long"] }]
+},
+{
+  "name":"io.github.humbleui.skija.Path",
+  "methods":[{"name":"<init>","parameterTypes":["long"] }]
+},
+{
+  "name":"io.github.humbleui.skija.PathSegment",
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["float","float","float","float","float","float","float","float","boolean"] }, {"name":"<init>","parameterTypes":["float","float","float","float","float","float","float","boolean"] }, {"name":"<init>","parameterTypes":["float","float","float","float","float","float","boolean"] }, {"name":"<init>","parameterTypes":["float","float","float","float","boolean","boolean"] }, {"name":"<init>","parameterTypes":["int","float","float","boolean"] }]
+},
+{
+  "name":"io.github.humbleui.skija.RSXform",
+  "methods":[{"name":"<init>","parameterTypes":["float","float","float","float"] }]
+},
+{
+  "name":"io.github.humbleui.skija.SurfaceProps",
+  "methods":[{"name":"<init>","parameterTypes":["boolean","int"] }, {"name":"_getFlags","parameterTypes":[] }, {"name":"_getPixelGeometryOrdinal","parameterTypes":[] }]
+},
+{
+  "name":"io.github.humbleui.skija.impl.Native",
+  "fields":[{"name":"_ptr"}]
+},
+{
+  "name":"io.github.humbleui.skija.paragraph.DecorationStyle",
+  "methods":[{"name":"<init>","parameterTypes":["boolean","boolean","boolean","boolean","int","int","float"] }]
+},
+{
+  "name":"io.github.humbleui.skija.paragraph.LineMetrics",
+  "methods":[{"name":"<init>","parameterTypes":["long","long","long","long","boolean","double","double","double","double","double","double","double","long"] }]
+},
+{
+  "name":"io.github.humbleui.skija.paragraph.Shadow",
+  "methods":[{"name":"<init>","parameterTypes":["int","float","float","double"] }]
+},
+{
+  "name":"io.github.humbleui.skija.paragraph.TextBox",
+  "methods":[{"name":"<init>","parameterTypes":["float","float","float","float","int"] }]
+},
+{
+  "name":"io.github.humbleui.skija.shaper.BidiRun",
+  "fields":[{"name":"_end"}, {"name":"_level"}]
+},
+{
+  "name":"io.github.humbleui.skija.shaper.FontMgrRunIterator"
+},
+{
+  "name":"io.github.humbleui.skija.shaper.FontRun",
+  "fields":[{"name":"_end"}],
+  "methods":[{"name":"_getFontPtr","parameterTypes":[] }]
+},
+{
+  "name":"io.github.humbleui.skija.shaper.HbIcuScriptRunIterator"
+},
+{
+  "name":"io.github.humbleui.skija.shaper.IcuBidiRunIterator"
+},
+{
+  "name":"io.github.humbleui.skija.shaper.LanguageRun",
+  "fields":[{"name":"_end"}, {"name":"_language"}]
+},
+{
+  "name":"io.github.humbleui.skija.shaper.RunHandler",
+  "methods":[{"name":"beginLine","parameterTypes":[] }, {"name":"commitLine","parameterTypes":[] }, {"name":"commitRun","parameterTypes":["io.github.humbleui.skija.shaper.RunInfo","short[]","io.github.humbleui.types.Point[]","int[]"] }, {"name":"commitRunInfo","parameterTypes":[] }, {"name":"runInfo","parameterTypes":["io.github.humbleui.skija.shaper.RunInfo"] }, {"name":"runOffset","parameterTypes":["io.github.humbleui.skija.shaper.RunInfo"] }]
+},
+{
+  "name":"io.github.humbleui.skija.shaper.RunInfo",
+  "fields":[{"name":"_fontPtr"}],
+  "methods":[{"name":"<init>","parameterTypes":["long","int","float","float","long","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.skija.shaper.ScriptRun",
+  "fields":[{"name":"_end"}, {"name":"_scriptTag"}]
+},
+{
+  "name":"io.github.humbleui.skija.shaper.ShapingOptions",
+  "fields":[{"name":"_approximatePunctuation"}, {"name":"_approximateSpaces"}, {"name":"_features"}, {"name":"_fontMgr"}, {"name":"_leftToRight"}]
+},
+{
+  "name":"io.github.humbleui.skija.shaper.TextBlobBuilderRunHandler"
+},
+{
+  "name":"io.github.humbleui.skija.shaper.TextLineRunHandler"
+},
+{
+  "name":"io.github.humbleui.skija.skottie.LogLevel",
+  "fields":[{"name":"ERROR"}, {"name":"WARNING"}]
+},
+{
+  "name":"io.github.humbleui.skija.skottie.Logger",
+  "methods":[{"name":"log","parameterTypes":["io.github.humbleui.skija.skottie.LogLevel","java.lang.String","java.lang.String"] }]
+},
+{
+  "name":"io.github.humbleui.skija.svg.SVGLength",
+  "methods":[{"name":"<init>","parameterTypes":["float","int"] }]
+},
+{
+  "name":"io.github.humbleui.skija.svg.SVGPreserveAspectRatio",
+  "methods":[{"name":"<init>","parameterTypes":["int","int"] }]
+},
+{
+  "name":"io.github.humbleui.types.IPoint",
+  "methods":[{"name":"<init>","parameterTypes":["int","int"] }]
+},
+{
+  "name":"io.github.humbleui.types.IRange",
+  "fields":[{"name":"_end"}, {"name":"_start"}],
+  "methods":[{"name":"<init>","parameterTypes":["int","int"] }]
+},
+{
+  "name":"io.github.humbleui.types.IRect",
+  "fields":[{"name":"_bottom"}, {"name":"_left"}, {"name":"_right"}, {"name":"_top"}],
+  "methods":[{"name":"<init>","parameterTypes":["int","int","int","int"] }, {"name":"makeLTRB","parameterTypes":["int","int","int","int"] }]
+},
+{
+  "name":"io.github.humbleui.types.Point",
+  "fields":[{"name":"_x"}, {"name":"_y"}],
+  "methods":[{"name":"<init>","parameterTypes":["float","float"] }]
+},
+{
+  "name":"io.github.humbleui.types.RRect",
+  "fields":[{"name":"_radii"}],
+  "methods":[{"name":"makeComplexLTRB","parameterTypes":["float","float","float","float","float[]"] }, {"name":"makeLTRB","parameterTypes":["float","float","float","float","float"] }, {"name":"makeLTRB","parameterTypes":["float","float","float","float","float","float"] }, {"name":"makeLTRB","parameterTypes":["float","float","float","float","float","float","float","float"] }, {"name":"makeNinePatchLTRB","parameterTypes":["float","float","float","float","float","float","float","float"] }]
+},
+{
+  "name":"io.github.humbleui.types.Rect",
+  "fields":[{"name":"_bottom"}, {"name":"_left"}, {"name":"_right"}, {"name":"_top"}],
+  "methods":[{"name":"makeLTRB","parameterTypes":["float","float","float","float"] }]
+},
+{
+  "name":"java.io.OutputStream",
+  "methods":[{"name":"flush","parameterTypes":[] }, {"name":"write","parameterTypes":["byte[]","int","int"] }]
+},
+{
+  "name":"java.lang.Boolean",
+  "methods":[{"name":"getBoolean","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"java.lang.Float",
+  "methods":[{"name":"<init>","parameterTypes":["float"] }]
+},
+{
+  "name":"java.lang.Runnable",
+  "methods":[{"name":"run","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.RuntimeException"
+},
+{
+  "name":"java.lang.String"
+},
+{
+  "name":"java.lang.Throwable",
+  "methods":[{"name":"printStackTrace","parameterTypes":[] }]
+},
+{
+  "name":"java.util.Iterator",
+  "methods":[{"name":"hasNext","parameterTypes":[] }, {"name":"next","parameterTypes":[] }]
+},
+{
+  "name":"java.util.function.BooleanSupplier",
+  "methods":[{"name":"getAsBoolean","parameterTypes":[] }]
+},
+{
+  "name":"java.util.function.Consumer",
+  "methods":[{"name":"accept","parameterTypes":["java.lang.Object"] }]
+}
+]

@@ -124,10 +124,10 @@
                    ;; Good enough for demo, but potentially bad things waiting
                    ;; to happen as the handlers will run on the driving thread.
                    ;; Ideally, the events would be processed on the main UI thread.
-                   (.start (Thread. demo/play-demo!)))
+                   (.start (Thread. #(demo/play-demo!))))
         (ui/label "Play Demo")))))
 
-(def app
+(defn app []
   ; we must wrap our app in a theme
   (ui/dynamic _ [{:keys [theme]} @state/*db]
     (theme/with-theme

@@ -1,6 +1,8 @@
+(set! *warn-on-reflection* true)
 (ns humble-outliner.main
   "The main app namespace.
   Responsible for initializing the window and app state when the app starts."
+  (:gen-class)
   (:require
    [humble-outliner.state :as state]
    [humble-outliner.views :as views]
@@ -15,11 +17,12 @@
     state/*app))
 
 ;; reset current app state on eval of this ns
-(reset! state/*app views/app)
+#_(reset! state/*app views/app)
 
 (defn -main
   "Run once on app start, starting the humble app."
   [& args]
+  (reset! state/*app (views/app))
   (ui/start-app!
     (reset! state/*window (window)))
   (state/redraw!))
