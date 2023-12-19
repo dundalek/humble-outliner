@@ -1,6 +1,6 @@
 {:paths ["src"]
  :deps {;io.github.humbleui/humbleui {:git/sha "d7c2915b4900d34b727cd2006ff0f8cca1907242"}
-        io.github.dundalek/humbleui {:git/sha "93432ffec2a9e412c5994978f32a73a0f7a3ebb8"}}
+        io.github.dundalek/humbleui {:git/sha "192cb4001a248feae4b247220ae7a1709035de90"}}
 
  :aliases
  {:dev {:extra-paths ["dev"]

@@ -69,6 +69,7 @@
    "--initialize-at-run-time=io.github.humbleui.skija.impl.Cleanable"
    "--initialize-at-run-time=io.github.humbleui.skija.impl.RefCnt$_FinalizerHolder"
    "--initialize-at-run-time=io.github.humbleui.skija"
+   "--initialize-at-build-time=io.github.humbleui.skija.BlendMode"
 
    ;; Dealing with native bindings using JNI
    "-H:+JNI"
