@@ -6,6 +6,7 @@
   (:require
    [humble-outliner.state :as state]
    [humble-outliner.views :as views]
+   [io.github.humbleui.app :as app]
    [io.github.humbleui.ui :as ui]))
 
 (defn window []
@@ -19,10 +20,17 @@
 ;; reset current app state on eval of this ns
 #_(reset! state/*app views/app)
 
+;; Replacement for `ui/start-app!` that does not start a separate thread.
+;; Workaround for a window not showing when compiled with Graal native image on macOS.
+(defmacro start-app! [& body]
+  `(app/start
+     (fn []
+       ~@body)))
+
 (defn -main
   "Run once on app start, starting the humble app."
   [& args]
   (reset! state/*app (views/app))
-  (ui/start-app!
-    (reset! state/*window (window)))
+  (start-app!
+   (reset! state/*window (window)))
   (state/redraw!))
